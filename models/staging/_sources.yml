@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Untouched copy of the UCI Online Retail dataset, loaded by ingest/ingest.py.
+    tables:
+      - name: transactions
+        description: One row per invoice line, all columns as text.
+        columns:
+          - name: InvoiceNo
+            tests: [not_null]
+          - name: StockCode
+            tests: [not_null]

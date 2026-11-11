@@ -1,0 +1,13 @@
+# Generated data (rebuilt by the pipeline)
+data/
+powerbi/data/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Python
+__pycache__/
+.venv/
+*.pyc

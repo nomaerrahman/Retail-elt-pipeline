@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: fct_sales
+    description: Valid sales lines only (no cancellations, fees, missing customers or zero prices).
+    columns:
+      - name: line_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: stock_code
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: stock_code
+      - name: order_date
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: quantity
+        tests: [non_negative]
+      - name: unit_price
+        tests: [non_negative]
+      - name: line_revenue
+        tests: [not_null, non_negative]
+
+  - name: dim_customer
+    description: One row per customer with lifetime value and RFM segment.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: orders
+        tests: [not_null, non_negative]
+      - name: revenue
+        tests: [non_negative]
+      - name: rfm_segment
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Champions', 'Loyal', 'New or Promising', 'At Risk', 'Lost', 'Needs Attention']
+
+  - name: dim_product
+    description: One row per product with its most common description.
+    columns:
+      - name: stock_code
+        tests: [unique, not_null]
+      - name: description
+        tests: [not_null]
+
+  - name: dim_date
+    description: Daily calendar for the sales period.
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+
+  - name: mart_monthly_kpis
+    description: Revenue, orders, customers and AOV by month.
+    columns:
+      - name: year_month
+        tests: [unique, not_null]
+      - name: revenue
+        tests: [non_negative]
+
+  - name: mart_cohort_retention
+    description: Monthly cohort retention table for the heatmap.
+    columns:
+      - name: retention_rate
+        tests: [not_null, non_negative]
+
+  - name: mart_data_quality
+    description: Rows removed by each cleaning rule.
+    columns:
+      - name: step
+        tests: [unique, not_null]

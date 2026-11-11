@@ -1,0 +1,7 @@
+retail_elt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: data/retail.duckdb
+      threads: 4
